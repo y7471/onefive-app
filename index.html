@@ -1238,7 +1238,7 @@ body.tab-home #homeView,body.tab-talk #talkView,body.tab-notes #notesView,body.t
 .of-jubo b{display:block;font-size:18px}
 .of-jubo small{display:block;margin-top:4px;color:var(--muted);font-size:13.5px;line-height:1.5}
 .of-jubo .go{display:inline-block;margin-top:10px;font-weight:700;color:var(--rubric,#2F4A7A);font-size:14px}
-.of-foot{margin:28px 4px 8px;font-size:12px;color:var(--muted);text-align:center;line-height:1.7}
+.of-foot{margin:28px 4px calc(120px + env(safe-area-inset-bottom,0px));font-size:12px;color:var(--muted);text-align:center;line-height:1.7}
 .of-foot a{color:inherit}
 .of-cafe{display:grid;gap:10px}
 .of-cafe a{text-decoration:none;color:inherit}
@@ -1283,6 +1283,25 @@ body.tab-home #homeView,body.tab-talk #talkView,body.tab-notes #notesView,body.t
 .of-join b{display:block;font-size:16.5px}
 .of-join small{display:block;font-size:13px;opacity:.92;margin-top:2px;line-height:1.45}
 .of-join .go{font-size:22px;opacity:.9}
+.of-admin-link{border:0;background:none;padding:0;font:inherit;color:inherit;text-decoration:underline;cursor:pointer}
+#adminSheet h2{margin:4px 0 2px}
+.ad-sec{margin-top:16px}
+.ad-sec>b{display:block;font-size:14px;margin-bottom:8px}
+.ad-in{display:grid;gap:8px}
+.ad-in input{font:inherit;font-size:16px;padding:11px 12px;border-radius:12px;border:1px solid var(--line);background:var(--bg);color:var(--ink);width:100%;box-sizing:border-box}
+.ad-row{display:flex;gap:8px;align-items:center;padding:9px 0;border-bottom:1px solid var(--line)}
+.ad-row:last-child{border-bottom:0}
+.ad-row .t{flex:1;min-width:0}
+.ad-row .t b{display:block;font-size:15px}
+.ad-row .t small{display:block;color:var(--muted);font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ad-btn{border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:10px;padding:8px 11px;font:inherit;font-size:13.5px;font-weight:600;cursor:pointer;white-space:nowrap;text-decoration:none}
+.ad-btn.pri{background:#5B4C8F;border-color:#5B4C8F;color:#fff}
+.ad-btn.red{color:#B3261E}
+.ad-link{display:flex;align-items:center;gap:10px;padding:12px 14px;border-radius:14px;background:linear-gradient(135deg,#F3EEFF,#FFF1EA);border:1px solid #E7DDF7;text-decoration:none;color:inherit;font-weight:700;flex:1;min-width:0}
+.ad-link span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ad-code{margin-top:10px;padding:14px;border-radius:14px;background:#FFF6E0;border:1px solid #F0D58A;text-align:center}
+.ad-code b{display:block;font-size:26px;letter-spacing:3px;font-family:ui-monospace,Menlo,monospace;margin:6px 0}
+.ad-note{font-size:12.5px;color:var(--muted);line-height:1.6;margin:8px 0 0;word-break:keep-all}
 body.tab-home #talkView,body.tab-talk #homeView{display:none}
 .tabbar.two{grid-template-columns:1fr 1fr}
 .of-hero,.of-hero *{font-family:'IBM Plex Sans KR',system-ui,sans-serif}
@@ -1356,7 +1375,7 @@ body.tab-home #talkView,body.tab-talk #homeView{display:none}
     <span><b id="shareTitle">친구에게 앱 나누기</b><small id="shareSub">링크나 QR로 보내면 바로 설치할 수 있어요</small></span>
     <span class="btns"><button type="button" id="installBtn" hidden>앱 설치</button><button type="button" class="ghost" id="shareBtn">나누기</button></span>
   </div>
-  <p class="of-foot">원파이브 · 개인이 만든 비공식 앱이에요. 주보는 오륜교회 홈페이지에 공개된 것을 그대로 보여 드려요.<br><a href="terms.html" target="_blank" rel="noopener">이용약관</a> · <a href="privacy.html" target="_blank" rel="noopener">개인정보처리방침</a></p>
+  <p class="of-foot">원파이브 · 개인이 만든 비공식 앱이에요. 주보는 오륜교회 홈페이지에 공개된 것을 그대로 보여 드려요.<br><a href="terms.html" target="_blank" rel="noopener">이용약관</a> · <a href="privacy.html" target="_blank" rel="noopener">개인정보처리방침</a> · <button type="button" class="of-admin-link" id="adminBtn">🔒 운영진</button></p>
 </section>
 
 <section id="talkView" class="home" aria-label="나눔"></section>
@@ -1371,6 +1390,7 @@ body.tab-home #talkView,body.tab-talk #homeView{display:none}
   <div class="row"><button class="btn" type="button" id="shareClose">닫기</button></div>
 </section>
 <section class="sheet" id="juboSheet" hidden aria-label="오륜교회 주보"></section>
+<section class="sheet" id="adminSheet" hidden aria-label="운영진"></section>
 
 <nav class="tabbar two" aria-label="화면 바꾸기">
   <button type="button" id="tabHome"><svg viewBox="0 0 24 24"><path d="M3 11l9-7 9 7"/><path d="M5 10v10h14V10"/></svg>홈</button>
@@ -1400,7 +1420,7 @@ const IN_KAKAO=/KAKAOTALK/i.test(navigator.userAgent), IN_APP=IN_KAKAO||/NAVER\(
 function fallbackCopy(t,done){const ta=document.createElement('textarea');ta.value=t;document.body.appendChild(ta);ta.select();try{document.execCommand('copy');done()}catch(e){toast('복사가 안 돼요. 길게 눌러 복사해 주세요')}ta.remove()}
 
 // ---- 창(시트) 열고 닫기 ----
-const SHEETS=['juboSheet','shareSheet'];
+const SHEETS=['juboSheet','shareSheet','adminSheet'];
 function anySheetOpen(){ return SHEETS.some(id=>{ const e=$(id); return e&&!e.hidden; }); }
 function closeAll(){ SHEETS.forEach(id=>{ const e=$(id); if(e) e.hidden=true; }); $('scrim').hidden=true; }
 function open(s){ const was=anySheetOpen(); closeAll(); $('scrim').hidden=false; s.hidden=false; if(!was) hpush(); }
@@ -2793,6 +2813,62 @@ $('shareNative').onclick=async()=>{ if(navigator.share){ try{ await navigator.sh
 $('shareCopy').onclick=()=>{ const t=shareText+'\n'+APP_URL; const done=()=>toast('링크를 복사했어요. 카톡에 붙여 넣어 보내세요');
   if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(t).then(done,()=>fallbackCopy(t,done))} else fallbackCopy(t,done); };
 $('shareClose').onclick=closeAll;
+
+
+// ---- 🔒 운영진 (운영진 코드로 들어와요. 코드는 이 폰에만 저장돼요) ----
+const AD={code:LS.get('ofadm',''),me:null,links:[],staff:null,newCode:null,edit:null};
+const AD_ERR={'bad code':'코드가 맞지 않아요','too many tries':'여러 번 틀려서 10분 동안 막혔어요. 잠시 뒤 다시 해 주세요','owner only':'대표 운영자만 할 수 있어요','bad url':'주소는 https:// 로 시작해야 해요','bad label':'이름은 1~30글자로 적어 주세요','bad name':'이름은 1~20글자로 적어 주세요','too many links':'바로가기는 30개까지예요','too many staff':'운영진은 30명까지예요','no staff':'그 운영진을 찾지 못했어요'};
+async function adCall(fn,args){
+  let r; try{ r=await grRpc(fn,Object.assign({p_code:AD.code},args||{})); }catch(e){ const m=String(e&&e.message||e); toast(/Could not find|PGRST202|does not exist/i.test(m)?'운영진 기능 준비가 안 됐어요 (SQL 실행이 필요해요)':'인터넷 연결을 확인해 주세요'); return null; }
+  if(r&&r.error){ if(r.error==='bad code'&&AD.me){ AD.code=''; AD.me=null; LS.set('ofadm',''); toast('운영진 코드가 바뀌었거나 해임되었어요. 다시 들어와 주세요'); adPaint(); return null; } toast(AD_ERR[r.error]||'잘 안 됐어요'); return null; }
+  return r;
+}
+async function adOpen(){ open($('adminSheet')); if(AD.code&&!AD.me){ const r=await adCall('of_login'); if(r){ AD.me=r; await adLoad(); } } adPaint(); }
+async function adLoad(){ const r=await adCall('of_links_get'); AD.links=r?r.links:[]; if(AD.me&&AD.me.role==='owner'){ const s=await adCall('of_staff_list'); AD.staff=s?s.staff:[]; } }
+function adPaint(){
+  const S=$('adminSheet'); const E=grEsc;
+  if(!AD.me){
+    S.innerHTML='<div class="grab"></div><h2>🔒 운영진</h2><div class="ref-en">운영진 코드를 넣으면 운영진 바로가기를 볼 수 있어요</div>'+
+      '<div class="ad-sec ad-in"><input id="adCode" placeholder="운영진 코드 (예: K7PX-3MQA)" autocomplete="off" autocapitalize="characters" spellcheck="false"><button type="button" class="ad-btn pri" id="adGo">들어가기</button></div>'+
+      '<p class="ad-note">운영진 코드는 대표 운영자에게 받을 수 있어요. 코드는 이 폰에만 저장되고, 다른 사람에게 보여 주면 안 돼요.</p><div class="row"><button class="btn" type="button" id="adClose">닫기</button></div>';
+    const go=async()=>{ const c=$('adCode').value.trim(); if(!c) return toast('코드를 넣어 주세요'); AD.code=c; const r=await adCall('of_login'); if(!r){ AD.code=''; return; } AD.me=r; LS.set('ofadm',c); await adLoad(); adPaint(); toast('👋 '+r.name+'님, 반가워요'); };
+    $('adGo').onclick=go; $('adCode').onkeydown=e=>{ if(e.key==='Enter') go(); };
+    $('adClose').onclick=closeAll; return;
+  }
+  const owner=AD.me.role==='owner';
+  let h='<div class="grab"></div><h2>🔒 운영진</h2><div class="ref-en">👋 '+E(AD.me.name)+' · '+(owner?'대표 운영자':'운영진')+'</div>';
+  h+='<div class="ad-sec"><b>🔗 운영진 바로가기</b>';
+  if(!AD.links.length) h+='<p class="ad-note">아직 바로가기가 없어요. 새가족 폼 편집 주소, 응답 시트 주소 등을 더해 두세요.</p>';
+  AD.links.forEach(l=>{ h+='<div class="ad-row"><a class="ad-link" href="'+E(l.url)+'" target="_blank" rel="noopener"><span>'+E(l.label)+'</span></a><button type="button" class="ad-btn" data-le="'+l.id+'">✏️</button></div>'; });
+  const ed=AD.edit;
+  h+='<div class="ad-in" style="margin-top:10px"'+(ed?'':' hidden')+' id="adForm"><input id="adLabel" maxlength="30" placeholder="이름 (예: 새가족 응답 시트)"><input id="adUrl" maxlength="500" placeholder="https://docs.google.com/…" inputmode="url" autocapitalize="off" spellcheck="false"><div style="display:flex;gap:8px"><button type="button" class="ad-btn pri" id="adSave" style="flex:1">저장</button>'+(ed&&ed.id?'<button type="button" class="ad-btn red" id="adDel">지우기</button>':'')+'<button type="button" class="ad-btn" id="adCancel">취소</button></div></div>';
+  if(!ed) h+='<button type="button" class="ad-btn" id="adAdd" style="margin-top:10px">＋ 바로가기 더하기</button>';
+  h+='<p class="ad-note">구글 폼·시트는 주소를 알아도 <b>공유받은 사람만</b> 열 수 있어요. 새 운영진이 시트를 보려면 시트의 <b>공유</b>에서 그분의 구글 이메일을 따로 추가해 주세요.</p></div>';
+  if(owner){
+    h+='<div class="ad-sec"><b>👥 운영진 관리 (대표만)</b>';
+    (AD.staff||[]).forEach(x=>{ h+='<div class="ad-row"><div class="t"><b>'+E(x.name)+(x.me?' (나)':'')+'</b><small>'+(x.role==='owner'?'대표 운영자':'운영진')+' · '+new Date(x.at).toLocaleDateString('ko-KR')+' 임명</small></div>'+(x.role==='staff'?'<button type="button" class="ad-btn" data-rc="'+x.id+'">코드 새로</button><button type="button" class="ad-btn red" data-rm="'+x.id+'">해임</button>':'')+'</div>'; });
+    h+='<div class="ad-in" style="margin-top:10px"><input id="adName" maxlength="20" placeholder="새 운영진 이름 (별칭도 좋아요)"><button type="button" class="ad-btn pri" id="adAppoint">👑 운영진 임명하기</button></div>';
+    if(AD.newCode) h+='<div class="ad-code"><small>'+E(AD.newCode.name)+'님의 운영진 코드</small><b>'+E(AD.newCode.code)+'</b><button type="button" class="ad-btn" id="adCopy">📋 복사</button><p class="ad-note">이 코드는 <b>지금 한 번만</b> 보여요. 본인에게만 직접 전해 주세요. 잃어버리면 \'코드 새로\'로 다시 만들 수 있어요.</p></div>';
+    h+='<p class="ad-note">해임하면 그 코드는 바로 못 쓰고, 이름도 함께 지워져요.</p></div>';
+  }
+  h+='<div class="row"><button class="btn" type="button" id="adOut">이 폰에서 나가기</button><button class="btn" type="button" id="adClose">닫기</button></div>';
+  S.innerHTML=h;
+  $('adClose').onclick=closeAll;
+  $('adOut').onclick=()=>{ AD.code=''; AD.me=null; AD.staff=null; AD.newCode=null; LS.set('ofadm',''); adPaint(); toast('이 폰에서 운영진 메뉴를 닫았어요'); };
+  if($('adAdd')) $('adAdd').onclick=()=>{ AD.edit={}; adPaint(); $('adLabel').focus(); };
+  S.querySelectorAll('[data-le]').forEach(b=>b.onclick=()=>{ AD.edit=AD.links.find(l=>String(l.id)===b.dataset.le)||{}; adPaint(); $('adLabel').value=AD.edit.label||''; $('adUrl').value=AD.edit.url||''; });
+  if(ed){ if(ed.label) $('adLabel').value=ed.label; if(ed.url) $('adUrl').value=ed.url;
+    $('adCancel').onclick=()=>{ AD.edit=null; adPaint(); };
+    $('adSave').onclick=async()=>{ const r=await adCall('of_link_save',{p_id:ed.id||null,p_label:$('adLabel').value.trim(),p_url:$('adUrl').value.trim()}); if(!r) return; AD.edit=null; await adLoad(); adPaint(); toast('저장했어요'); };
+    if($('adDel')) $('adDel').onclick=async()=>{ if(!confirm('이 바로가기를 지울까요?')) return; const r=await adCall('of_link_delete',{p_id:ed.id}); if(!r) return; AD.edit=null; await adLoad(); adPaint(); }; }
+  if(owner){
+    $('adAppoint').onclick=async()=>{ const n=$('adName').value.trim(); if(!n) return toast('이름을 적어 주세요'); const r=await adCall('of_staff_add',{p_name:n}); if(!r) return; AD.newCode={name:n,code:r.code}; await adLoad(); adPaint(); };
+    S.querySelectorAll('[data-rm]').forEach(b=>b.onclick=async()=>{ const x=AD.staff.find(y=>String(y.id)===b.dataset.rm); if(!confirm((x?x.name:'이 운영진')+'님을 해임할까요? 그 코드는 바로 못 쓰게 돼요.')) return; const r=await adCall('of_staff_remove',{p_id:+b.dataset.rm}); if(!r) return; AD.newCode=null; await adLoad(); adPaint(); toast('해임했어요'); });
+    S.querySelectorAll('[data-rc]').forEach(b=>b.onclick=async()=>{ const x=AD.staff.find(y=>String(y.id)===b.dataset.rc); if(!confirm((x?x.name:'')+'님의 코드를 새로 만들까요? 예전 코드는 바로 못 쓰게 돼요.')) return; const r=await adCall('of_staff_recode',{p_id:+b.dataset.rc}); if(!r) return; AD.newCode={name:x?x.name:'',code:r.code}; adPaint(); });
+    if($('adCopy')) $('adCopy').onclick=()=>{ const t=AD.newCode.code, done=()=>toast('코드를 복사했어요'); if(navigator.clipboard&&navigator.clipboard.writeText) navigator.clipboard.writeText(t).then(done,()=>fallbackCopy(t,done)); else fallbackCopy(t,done); };
+  }
+}
+$('adminBtn').onclick=adOpen;
 
 // ---- 시작 ----
 $('homeDate').textContent=new Date().toLocaleDateString('ko-KR',{timeZone:'Asia/Seoul',month:'long',day:'numeric',weekday:'long'});
