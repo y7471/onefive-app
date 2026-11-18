@@ -1251,6 +1251,16 @@ body.tab-home #homeView,body.tab-talk #talkView,body.tab-notes #notesView,body.t
 .of-cafe-btn span{font-size:20px}
 .of-cafe-btn b{font-size:15px}
 .of-cafe-btn small{color:var(--muted);font-size:13px;text-align:right}
+.of-intro{margin:14px 0 4px;padding:18px 18px 14px;border-radius:20px;background:linear-gradient(135deg,#F3EEFF,#FFF1EA);border:1px solid #E7DDF7}
+.of-quote{margin:0;font-family:'Gowun Batang',serif;font-size:17px;font-weight:700;line-height:1.6;color:#3A2E63;word-break:keep-all}
+.of-tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px}
+.of-tags span{font-size:12.5px;font-weight:600;padding:4px 10px;border-radius:999px;background:#fff;color:#5B4C8F;border:1px solid #E2D7F5}
+.of-more{margin-top:12px}
+.of-more summary{cursor:pointer;font-size:13.5px;font-weight:700;color:#5B4C8F;list-style:none}
+.of-more summary::-webkit-details-marker{display:none}
+.of-more summary::after{content:' ›';display:inline-block;transition:transform .2s}
+.of-more[open] summary::after{transform:rotate(90deg)}
+.of-more p{margin:10px 0 0;font-size:14.5px;line-height:1.8;color:var(--ink);word-break:keep-all}
 body.tab-home #talkView,body.tab-talk #homeView{display:none}
 .tabbar.two{grid-template-columns:1fr 1fr}
 .of-hero,.of-hero *{font-family:'IBM Plex Sans KR',system-ui,sans-serif}
@@ -1264,6 +1274,14 @@ body.tab-home #talkView,body.tab-talk #homeView{display:none}
     <h1 class="of-name">원파이브</h1>
     <div class="of-date" id="homeDate"></div>
   </div>
+  <section class="of-intro" aria-label="원파이브 극단 소개">
+    <p class="of-quote">“진리는 변함없지만 진리를 담는 그릇은 시대마다 새로워져야 합니다.”</p>
+    <div class="of-tags"><span>🎭 순수창작극</span><span>✝️ 문화선교</span><span>📅 1997년 2월 창단</span></div>
+    <details class="of-more"><summary>극단 소개 전체 보기</summary>
+      <p>원파이브[one - five]극단은 세계의 복음화의 상징으로 오대양 육대주를 상징하는 <b>다섯 개의 원이 합쳐진 오륜의 이미지</b>로 극단 명칭을 정하고, 평신도를 중심으로 복음에 기초한 문화선교적 입장에 서서 순수창작극 활동으로 이 땅에 하나님의 문화를 회복하려고 1997년 2월에 창단되었습니다.</p>
+      <p>문화의 세기인 21세기를 맞아 어둠에 깃든 세상문화와 생명 잃은 예술들을 그리스도의 말씀과 그의 피로 정결케 하고 <b>‘복음적인 문화와 생명의 예술’</b>로 회복하여, 주님께서 허락하신 창조적 사랑으로 이 시대의 문화를 새롭게 하는 사역을 감당하겠습니다.</p>
+    </details>
+  </section>
   <div class="sec">이번 주 주보</div>
   <button type="button" class="of-jubo" id="juboCard"><span></span><span><b>오륜교회 주보</b><small id="juboInfo">주보를 불러오는 중…</small></span></button>
   <div class="sec">원파이브 카페</div>
