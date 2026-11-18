@@ -1,0 +1,20 @@
+:root{--bg:#F7F5F0;--surface:#fff;--ink:#22201C;--muted:#6B655C;--line:#E4DED3;--accent:#8A3A57}
+@media (prefers-color-scheme:dark){:root{--bg:#141318;--surface:#1D1C22;--ink:#ECE8E1;--muted:#A49D93;--line:#33313A;--accent:#E39AB4}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Noto Sans KR",-apple-system,"Apple SD Gothic Neo","Malgun Gothic",sans-serif;font-size:15.5px;line-height:1.75;word-break:keep-all}
+.wrap{max-width:760px;margin:0 auto;padding:24px 16px 64px}
+header{padding:8px 0 16px;border-bottom:1px solid var(--line);margin-bottom:18px}
+header a{color:var(--accent);text-decoration:none;font-weight:600;font-size:14px}
+h1{font-size:24px;margin:10px 0 4px}
+.meta{color:var(--muted);font-size:13.5px}
+h2{font-size:17.5px;margin:30px 0 8px;padding-top:6px}
+h3{font-size:15.5px;margin:18px 0 6px}
+p,li{margin:6px 0}
+ol,ul{padding-left:22px}
+table{width:100%;border-collapse:collapse;margin:10px 0;font-size:14px;background:var(--surface)}
+th,td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}
+th{background:color-mix(in srgb,var(--accent) 8%,var(--surface));font-weight:700;white-space:nowrap}
+.box{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px 14px;margin:12px 0}
+.toc a{color:var(--accent);text-decoration:none}
+footer{margin-top:40px;color:var(--muted);font-size:13px;border-top:1px solid var(--line);padding-top:14px}
+@media (max-width:560px){table{font-size:13px}th,td{padding:6px 7px}}
