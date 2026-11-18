@@ -1278,6 +1278,11 @@ body.tab-home #homeView,body.tab-talk #talkView,body.tab-notes #notesView,body.t
 .of-bell ol{margin:10px 0 0;padding-left:20px;font-size:14px;line-height:1.7;word-break:keep-all}
 .of-bell li{margin:3px 0}
 .of-bell p{margin:8px 0 2px;font-size:13px;color:var(--muted);line-height:1.6;word-break:keep-all}
+.of-join{display:grid;grid-template-columns:48px 1fr auto;gap:12px;align-items:center;margin:14px 0 4px;padding:14px;border-radius:20px;text-decoration:none;color:#fff;background:linear-gradient(135deg,#8E7CF0,#F29A86);box-shadow:0 8px 22px rgba(142,124,240,.28)}
+.of-join-ic{width:48px;height:48px;border-radius:14px;display:grid;place-items:center;font-size:24px;background:rgba(255,255,255,.22)}
+.of-join b{display:block;font-size:16.5px}
+.of-join small{display:block;font-size:13px;opacity:.92;margin-top:2px;line-height:1.45}
+.of-join .go{font-size:22px;opacity:.9}
 body.tab-home #talkView,body.tab-talk #homeView{display:none}
 .tabbar.two{grid-template-columns:1fr 1fr}
 .of-hero,.of-hero *{font-family:'IBM Plex Sans KR',system-ui,sans-serif}
@@ -1323,6 +1328,11 @@ body.tab-home #talkView,body.tab-talk #homeView{display:none}
   </section>
   <div class="sec">이번 주 주보</div>
   <button type="button" class="of-jubo" id="juboCard"><span></span><span><b>오륜교회 주보</b><small id="juboInfo">주보를 불러오는 중…</small></span></button>
+  <a class="of-join" href="https://docs.google.com/forms/d/e/1FAIpQLSetUxbIPoAzfvoeeXeweUUvoQDW-YP4R6ooWqSNW06Fxr3vNQ/viewform" target="_blank" rel="noopener">
+    <span class="of-join-ic">🙋</span>
+    <span><b>새가족 등록</b><small>원파이브에 처음 오셨나요? 2~3분이면 등록할 수 있어요</small></span>
+    <span class="go">›</span>
+  </a>
   <div class="sec">원파이브 카페</div>
   <div class="of-cafe">
     <a class="of-cafe-main" href="https://cafe.naver.com/oryunonefive" target="_blank" rel="noopener">
