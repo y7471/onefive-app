@@ -1270,6 +1270,14 @@ body.tab-home #homeView,body.tab-talk #talkView,body.tab-notes #notesView,body.t
 .of-list{margin:10px 0 2px;padding-left:22px;font-size:14.5px;line-height:1.7;word-break:keep-all}
 .of-list li{margin:3px 0}
 .of-list li::marker{color:#9465F0;font-weight:700}
+.of-bell{padding:10px 14px;border-radius:14px;background:var(--surface);border:1px dashed var(--line)}
+.of-bell summary{cursor:pointer;font-size:14px;font-weight:700;list-style:none}
+.of-bell summary::-webkit-details-marker{display:none}
+.of-bell summary::after{content:' ›'}
+.of-bell[open] summary::after{content:' ⌄'}
+.of-bell ol{margin:10px 0 0;padding-left:20px;font-size:14px;line-height:1.7;word-break:keep-all}
+.of-bell li{margin:3px 0}
+.of-bell p{margin:8px 0 2px;font-size:13px;color:var(--muted);line-height:1.6;word-break:keep-all}
 body.tab-home #talkView,body.tab-talk #homeView{display:none}
 .tabbar.two{grid-template-columns:1fr 1fr}
 .of-hero,.of-hero *{font-family:'IBM Plex Sans KR',system-ui,sans-serif}
@@ -1323,6 +1331,15 @@ body.tab-home #talkView,body.tab-talk #homeView{display:none}
       <span class="go">›</span>
     </a>
     <a class="of-cafe-btn" href="https://cafe.naver.com/f-e/cafes/31058379/menus/3?viewType=L" target="_blank" rel="noopener"><span>📢</span><b>광고</b><small>실시간 광고 게시판</small></a>
+    <details class="of-bell"><summary>🔔 새 광고가 올라오면 알림 받기</summary>
+      <ol>
+        <li>폰에 <b>네이버 카페 앱</b>이 있어야 해요. 없으면 Play 스토어·App Store에서 "네이버 카페"를 설치해요.</li>
+        <li>위의 <b>📢 광고</b>를 눌러 광고 게시판을 열어요. (카페 가입이 안 되어 있으면 먼저 가입해요)</li>
+        <li>게시판 위쪽의 <b>🔔 알림</b> 또는 <b>구독</b> 버튼을 눌러 <b>새 글 알림</b>을 켜요.</li>
+        <li>폰 설정에서 <b>네이버 카페 앱 알림</b>이 켜져 있는지도 확인해요.</li>
+      </ol>
+      <p>이제 광고 게시판에 새 글이 올라오면 네이버 카페 앱이 알려 줘요. 버튼 위치는 카페 앱 버전에 따라 조금 다를 수 있어요.</p>
+    </details>
   </div>
   <div class="share-card" id="shareCard">
     <img src="icon-192.png" alt="">
