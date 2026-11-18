@@ -1241,6 +1241,17 @@ body.tab-home #homeView,body.tab-talk #talkView,body.tab-notes #notesView,body.t
 .of-jubo .go{display:inline-block;margin-top:10px;font-weight:700;color:var(--rubric,#2F4A7A);font-size:14px}
 .of-foot{margin:28px 4px 8px;font-size:12px;color:var(--muted);text-align:center;line-height:1.7}
 .of-foot a{color:inherit}
+.of-cafe{display:grid;gap:10px}
+.of-cafe a{text-decoration:none;color:inherit}
+.of-cafe-main{display:grid;grid-template-columns:52px 1fr auto;gap:12px;align-items:center;padding:14px;border-radius:20px;border:1px solid var(--line);background:var(--surface)}
+.of-cafe-ic{width:52px;height:52px;border-radius:16px;display:grid;place-items:center;font-size:26px;background:linear-gradient(135deg,#EDE7FF,#FFE9DF)}
+.of-cafe-main b{display:block;font-size:16.5px}
+.of-cafe-main small{display:block;color:var(--muted);font-size:13px;margin-top:2px}
+.of-cafe-main .go{font-size:22px;color:var(--muted)}
+.of-cafe-btn{display:grid;grid-template-columns:auto auto 1fr;gap:8px;align-items:center;padding:12px 14px;border-radius:16px;background:#03C75A14;border:1px solid #03C75A40}
+.of-cafe-btn span{font-size:20px}
+.of-cafe-btn b{font-size:15px}
+.of-cafe-btn small{color:var(--muted);font-size:13px;text-align:right}
 body.tab-home #talkView,body.tab-talk #homeView{display:none}
 .tabbar.two{grid-template-columns:1fr 1fr}
 .of-hero,.of-hero *{font-family:'IBM Plex Sans KR',system-ui,sans-serif}
@@ -1256,6 +1267,15 @@ body.tab-home #talkView,body.tab-talk #homeView{display:none}
   </div>
   <div class="sec">이번 주 주보</div>
   <button type="button" class="of-jubo" id="juboCard"><span></span><span><b>오륜교회 주보</b><small id="juboInfo">주보를 불러오는 중…</small></span></button>
+  <div class="sec">원파이브 카페</div>
+  <div class="of-cafe">
+    <a class="of-cafe-main" href="https://cafe.naver.com/oryunonefive" target="_blank" rel="noopener">
+      <span class="of-cafe-ic">🎭</span>
+      <span><b>오륜교회 원파이브 극단</b><small>네이버 카페 바로가기</small></span>
+      <span class="go">›</span>
+    </a>
+    <a class="of-cafe-btn" href="https://cafe.naver.com/f-e/cafes/31058379/menus/3?viewType=L" target="_blank" rel="noopener"><span>📢</span><b>광고</b><small>실시간 광고 게시판</small></a>
+  </div>
   <div class="share-card" id="shareCard">
     <img src="icon-192.png" alt="">
     <span><b id="shareTitle">친구에게 앱 나누기</b><small id="shareSub">링크나 QR로 보내면 바로 설치할 수 있어요</small></span>
