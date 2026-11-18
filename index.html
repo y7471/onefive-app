@@ -1349,7 +1349,7 @@ body.tab-home #talkView,body.tab-talk #homeView{display:none}
   <p class="of-foot">원파이브 · 개인이 만든 비공식 앱이에요. 주보는 오륜교회 홈페이지에 공개된 것을 그대로 보여 드려요.<br><a href="terms.html" target="_blank" rel="noopener">이용약관</a> · <a href="privacy.html" target="_blank" rel="noopener">개인정보처리방침</a></p>
 </section>
 
-<section id="talkView" class="home" aria-label="소그룹"></section>
+<section id="talkView" class="home" aria-label="나눔"></section>
 
 <div class="scrim" id="scrim" hidden></div>
 <section class="sheet" id="shareSheet" hidden aria-label="앱 나누기">
@@ -1364,7 +1364,7 @@ body.tab-home #talkView,body.tab-talk #homeView{display:none}
 
 <nav class="tabbar two" aria-label="화면 바꾸기">
   <button type="button" id="tabHome"><svg viewBox="0 0 24 24"><path d="M3 11l9-7 9 7"/><path d="M5 10v10h14V10"/></svg>홈</button>
-  <button type="button" id="tabTalk"><svg viewBox="0 0 24 24"><path d="M4 5h11a2 2 0 012 2v6a2 2 0 01-2 2H9l-4 3v-3H4a2 2 0 01-2-2V7a2 2 0 012-2z"/><path d="M19 9h1a2 2 0 012 2v5a2 2 0 01-2 2h-1v3l-3-3"/></svg>소그룹</button>
+  <button type="button" id="tabTalk"><svg viewBox="0 0 24 24"><path d="M4 5h11a2 2 0 012 2v6a2 2 0 01-2 2H9l-4 3v-3H4a2 2 0 01-2-2V7a2 2 0 012-2z"/><path d="M19 9h1a2 2 0 012 2v5a2 2 0 01-2 2h-1v3l-3-3"/></svg>나눔</button>
 </nav>
 <section class="pilsa game" id="gameView" hidden aria-label="게임"><div class="ph"><button type="button" id="gameClose" aria-label="게임 닫기">✕</button><h2>게임</h2></div><div id="gameBody"></div></section>
 <div class="toast" id="toast" hidden></div>
@@ -1418,7 +1418,7 @@ function setTab(t){
   $('tabHome').setAttribute('aria-current',t==='home'?'page':'false');
   $('tabTalk').setAttribute('aria-current',t==='talk'?'page':'false');
   try{ history.replaceState(null,'','#'+t); }catch(e){}
-  document.title=t==='talk'?'소그룹 · 원파이브':'원파이브';
+  document.title=t==='talk'?'나눔 · 원파이브':'원파이브';
   if(t==='talk') renderTalk();
   window.scrollTo(0,0);
 }
@@ -1438,7 +1438,7 @@ function talkResetPaint(){ const b=$('tkReset'); if(!b) return; const n=TALK.use
 async function renderTalk(){
   await talkLoad(); const V=$('talkView');
   if(!V.dataset.ready){ V.dataset.ready='1';
-    V.innerHTML='<div class="home-head"><h1>소그룹</h1><span class="home-date">함께 나누고, 함께 웃어요</span></div>'+
+    V.innerHTML='<div class="home-head"><h1>나눔</h1><span class="home-date">함께 나누고, 함께 웃어요</span></div>'+
       '<div class="sg-tabs five" role="tablist"><button type="button" data-p="talk" aria-selected="true"><i>💬</i><span>나눔</span></button><button type="button" data-p="game" aria-selected="false"><i>🎮</i><span>게임</span></button><button type="button" data-p="food" aria-selected="false"><i>🍽️</i><span>식사</span></button><button type="button" data-p="cafe" aria-selected="false"><i>☕</i><span>카페</span></button><button type="button" data-p="tools" aria-selected="false"><i>🧰</i><span>도구</span></button></div>'+
       '<div class="sg-pane" id="sgTalk">'+
       '<div class="tk-chips" id="tkT"></div><div class="tk-chips" id="tkC"></div>'+
