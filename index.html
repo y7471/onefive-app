@@ -1261,6 +1261,15 @@ body.tab-home #homeView,body.tab-talk #talkView,body.tab-notes #notesView,body.t
 .of-more summary::after{content:' ›';display:inline-block;transition:transform .2s}
 .of-more[open] summary::after{transform:rotate(90deg)}
 .of-more p{margin:10px 0 0;font-size:14.5px;line-height:1.8;color:var(--ink);word-break:keep-all}
+.of-lbl{font-size:12px;font-weight:700;letter-spacing:.5px;color:#8A7BB8;margin:14px 0 4px}
+.of-lbl:first-child{margin-top:0}
+.of-folds{margin-top:14px;border-top:1px solid #E7DDF7}
+.of-folds .of-more{margin:0;padding:11px 2px;border-bottom:1px solid #E7DDF7}
+.of-folds .of-more:last-child{border-bottom:0;padding-bottom:2px}
+.of-folds .of-more summary{font-size:14.5px;color:#4A3D7A;display:flex;justify-content:space-between}
+.of-list{margin:10px 0 2px;padding-left:22px;font-size:14.5px;line-height:1.7;word-break:keep-all}
+.of-list li{margin:3px 0}
+.of-list li::marker{color:#9465F0;font-weight:700}
 body.tab-home #talkView,body.tab-talk #homeView{display:none}
 .tabbar.two{grid-template-columns:1fr 1fr}
 .of-hero,.of-hero *{font-family:'IBM Plex Sans KR',system-ui,sans-serif}
@@ -1275,12 +1284,34 @@ body.tab-home #talkView,body.tab-talk #homeView{display:none}
     <div class="of-date" id="homeDate"></div>
   </div>
   <section class="of-intro" aria-label="원파이브 극단 소개">
+    <div class="of-lbl">기본정신</div>
     <p class="of-quote">“진리는 변함없지만 진리를 담는 그릇은 시대마다 새로워져야 합니다.”</p>
+    <div class="of-lbl">사역마인드</div>
+    <p class="of-quote">“교회는 TV보다 재미있어야 한다.”</p>
     <div class="of-tags"><span>🎭 순수창작극</span><span>✝️ 문화선교</span><span>📅 1997년 2월 창단</span></div>
-    <details class="of-more"><summary>극단 소개 전체 보기</summary>
+    <div class="of-folds">
+    <details class="of-more"><summary>📖 극단 소개</summary>
       <p>원파이브[one - five]극단은 세계의 복음화의 상징으로 오대양 육대주를 상징하는 <b>다섯 개의 원이 합쳐진 오륜의 이미지</b>로 극단 명칭을 정하고, 평신도를 중심으로 복음에 기초한 문화선교적 입장에 서서 순수창작극 활동으로 이 땅에 하나님의 문화를 회복하려고 1997년 2월에 창단되었습니다.</p>
       <p>문화의 세기인 21세기를 맞아 어둠에 깃든 세상문화와 생명 잃은 예술들을 그리스도의 말씀과 그의 피로 정결케 하고 <b>‘복음적인 문화와 생명의 예술’</b>로 회복하여, 주님께서 허락하신 창조적 사랑으로 이 시대의 문화를 새롭게 하는 사역을 감당하겠습니다.</p>
     </details>
+    <details class="of-more"><summary>🌟 5대 비전</summary>
+      <ol class="of-list">
+        <li>교회 내 목회를 돕는 드라마사역</li>
+        <li>창조적인 문화 콘텐츠를 개발하여 기독교 문화 대안을 제시하는 사역</li>
+        <li>다양한 문화매체를 활용하여 복음적 문화운동을 전개하는 사역</li>
+        <li>문화소외지역을 찾아가 선교적 사명을 감당하는 예수문화운동 사역</li>
+      </ol>
+    </details>
+    <details class="of-more"><summary>🎬 5대 사역</summary>
+      <ol class="of-list">
+        <li>예배를 돕는 스킷드라마 사역</li>
+        <li>창작뮤지컬 제작</li>
+        <li>드라마/뮤지컬 아카데미 사역</li>
+        <li>스킷드라마/뮤지컬 대본 및 관련자료 공유사이트 운영</li>
+        <li>간증드라마 제작 사역</li>
+      </ol>
+    </details>
+    </div>
   </section>
   <div class="sec">이번 주 주보</div>
   <button type="button" class="of-jubo" id="juboCard"><span></span><span><b>오륜교회 주보</b><small id="juboInfo">주보를 불러오는 중…</small></span></button>
