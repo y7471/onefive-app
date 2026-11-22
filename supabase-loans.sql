@@ -2,14 +2,15 @@
 -- 새 Supabase 프로젝트 → SQL Editor 에 통째로 붙여 넣고 Run 을 누르세요. (다시 실행해도 괜찮아요)
 -- ※ supabase-admin.sql (운영진) 을 먼저 실행했어야 해요.
 --
---  · 어떤 부서의 누가, 어떤 물품을, 언제 가져갔는지 · 언제 반납했는지를 기록해요.
+--  · 어떤 부서의 누가(연락처 포함), 어떤 물품을, 언제 가져갔는지 · 언제 반납했는지를 기록해요.
 --  · 운영진 코드가 있어야만 보고, 쓰고, 고칠 수 있어요.
---  · 반납한 기록은 반납한 날부터 1년이 지나면 자동으로 지워져요. (빌려 간 사람 이름이 개인정보라서)
+--  · 반납한 기록은 반납한 날부터 1년이 지나면 자동으로 지워져요. (빌려 간 사람 이름·연락처가 개인정보라서)
 
 create table if not exists public.of_loans (
   id bigint generated always as identity primary key,
   dept text not null check (char_length(dept) between 1 and 30),      -- 부서
   who text not null check (char_length(who) between 1 and 20),        -- 가져간 사람
+  phone text check (phone ~ '^[0-9-]{9,14}$'),                         -- 가져간 사람 연락처
   item text not null check (char_length(item) between 1 and 80),     -- 물품
   out_date date not null,                                               -- 가져간 날
   due_date date,                                                        -- 반납 예정일 (선택)
@@ -20,6 +21,7 @@ create table if not exists public.of_loans (
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
 );
+alter table public.of_loans add column if not exists phone text check (phone ~ '^[0-9-]{9,14}$');   -- 예전에 만든 표에도 연락처 칸 더하기
 alter table public.of_loans enable row level security;
 revoke all on public.of_loans from anon, authenticated;
 
@@ -31,18 +33,24 @@ begin
   if a.id is null then return public.of__deny(a); end if;
   delete from public.of_loans where returned_at is not null and returned_at < (now() at time zone 'Asia/Seoul')::date - 365;
   return jsonb_build_object('loans', coalesce((select jsonb_agg(jsonb_build_object(
-      'id', l.id, 'dept', l.dept, 'who', l.who, 'item', l.item, 'out', l.out_date, 'due', l.due_date, 'memo', l.memo,
+      'id', l.id, 'dept', l.dept, 'who', l.who, 'phone', l.phone, 'item', l.item, 'out', l.out_date, 'due', l.due_date, 'memo', l.memo,
       'ret', l.returned_at, 'out_by', l.out_by, 'ret_by', l.returned_by)
     order by (l.returned_at is null) desc, coalesce(l.returned_at, l.out_date) desc, l.id desc)
     from (select * from public.of_loans order by (returned_at is null) desc, coalesce(returned_at, out_date) desc limit 300) l), '[]'::jsonb));
 end $$;
 
 -- 기록하기·고치기 (p_id 가 없으면 새로)
-create or replace function public.of_loan_save(p_code text, p_id bigint, p_dept text, p_who text, p_item text, p_out date, p_due date, p_memo text) returns jsonb
+drop function if exists public.of_loan_save(text,bigint,text,text,text,date,date,text);
+create or replace function public.of_loan_save(p_code text, p_id bigint, p_dept text, p_who text, p_phone text, p_item text, p_out date, p_due date, p_memo text) returns jsonb
 language plpgsql security definer set search_path = '' as $$
-declare a public.of_admins := public.of__auth(p_code);
+declare a public.of_admins := public.of__auth(p_code); v_phone text := regexp_replace(coalesce(p_phone, ''), '[^0-9]', '', 'g');
 begin
   if a.id is null then return public.of__deny(a); end if;
+  if v_phone !~ '^0[0-9]{8,10}$' then return '{"error":"bad phone"}'; end if;
+  -- 010-1234-5678 모양으로 맞춰 저장
+  v_phone := case when char_length(v_phone) = 11 then substr(v_phone,1,3)||'-'||substr(v_phone,4,4)||'-'||substr(v_phone,8,4)
+                  when char_length(v_phone) = 10 then substr(v_phone,1,3)||'-'||substr(v_phone,4,3)||'-'||substr(v_phone,7,4)
+                  else v_phone end;
   if char_length(btrim(coalesce(p_dept, ''))) not between 1 and 30 then return '{"error":"bad dept"}'; end if;
   if char_length(btrim(coalesce(p_who, ''))) not between 1 and 20 then return '{"error":"bad who"}'; end if;
   if char_length(btrim(coalesce(p_item, ''))) not between 1 and 80 then return '{"error":"bad item"}'; end if;
@@ -51,10 +59,10 @@ begin
   if char_length(coalesce(p_memo, '')) > 200 then return '{"error":"bad memo"}'; end if;
   if p_id is null then
     if (select count(*) from public.of_loans where returned_at is null) >= 500 then return '{"error":"too many"}'; end if;
-    insert into public.of_loans (dept, who, item, out_date, due_date, memo, out_by)
-    values (btrim(p_dept), btrim(p_who), btrim(p_item), p_out, p_due, nullif(btrim(coalesce(p_memo, '')), ''), a.name);
+    insert into public.of_loans (dept, who, phone, item, out_date, due_date, memo, out_by)
+    values (btrim(p_dept), btrim(p_who), v_phone, btrim(p_item), p_out, p_due, nullif(btrim(coalesce(p_memo, '')), ''), a.name);
   else
-    update public.of_loans set dept = btrim(p_dept), who = btrim(p_who), item = btrim(p_item), out_date = p_out, due_date = p_due,
+    update public.of_loans set dept = btrim(p_dept), who = btrim(p_who), phone = v_phone, item = btrim(p_item), out_date = p_out, due_date = p_due,
       memo = nullif(btrim(coalesce(p_memo, '')), ''), updated_at = now() where id = p_id;
   end if;
   return '{"ok":true}';
@@ -84,10 +92,10 @@ begin
 end $$;
 
 revoke all on function public.of_loans_get(text) from public, anon, authenticated;
-revoke all on function public.of_loan_save(text,bigint,text,text,text,date,date,text) from public, anon, authenticated;
+revoke all on function public.of_loan_save(text,bigint,text,text,text,text,date,date,text) from public, anon, authenticated;
 revoke all on function public.of_loan_return(text,bigint,boolean) from public, anon, authenticated;
 revoke all on function public.of_loan_delete(text,bigint) from public, anon, authenticated;
 grant execute on function public.of_loans_get(text) to anon, authenticated;
-grant execute on function public.of_loan_save(text,bigint,text,text,text,date,date,text) to anon, authenticated;
+grant execute on function public.of_loan_save(text,bigint,text,text,text,text,date,date,text) to anon, authenticated;
 grant execute on function public.of_loan_return(text,bigint,boolean) to anon, authenticated;
 grant execute on function public.of_loan_delete(text,bigint) to anon, authenticated;
