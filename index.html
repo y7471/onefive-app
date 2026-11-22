@@ -1321,6 +1321,32 @@ body.tab-home #homeView,body.tab-talk #talkView,body.tab-notes #notesView,body.t
 .ln-meta{font-size:13px;color:var(--muted);margin-top:3px;word-break:keep-all}
 .ln-acts{display:flex;gap:8px;margin-top:8px}
 .ln-tel{color:#2D5FD0;font-weight:700;text-decoration:none}
+.att-mode{display:flex;gap:6px;margin-bottom:12px}
+.att-mode button{flex:1;padding:8px 6px;border-radius:12px;border:1px solid var(--line);background:var(--bg);color:var(--ink);font:inherit;font-size:13px;font-weight:700;cursor:pointer}
+.att-mode button[aria-selected=true]{background:#5B4C8F;border-color:#5B4C8F;color:#fff}
+.att-mode.sm button{font-size:12.5px;padding:7px 4px}
+.att-nav{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:10px}
+.att-nav b{font-size:16px}
+.att-nav button:disabled{opacity:.35}
+.att-sum{display:flex;flex-wrap:wrap;gap:6px 12px;font-size:13.5px;margin-bottom:10px;color:var(--muted)}
+.att-sum .ok{color:#1E7A45;font-weight:700}.att-sum .no{color:#B3261E;font-weight:700}
+.att-row{display:flex;align-items:center;gap:6px;padding:8px 0;border-bottom:1px solid var(--line)}
+.att-row .t,.att-st .t{flex:1;min-width:0}
+.att-row .t b,.att-st .t b{display:block;font-size:15px}
+.att-row .t small,.att-st .t small{display:block;font-size:12px;color:var(--muted)}
+.att-b{border:1px solid var(--line);background:var(--surface);color:var(--muted);border-radius:10px;padding:8px 9px;font:inherit;font-size:13px;font-weight:700;cursor:pointer;white-space:nowrap}
+.att-b.in.on{background:#E3F5EA;border-color:#2E9E5B;color:#1E7A45}
+.att-b.out.on{background:#FDE7E5;border-color:#D9534F;color:#B3261E}
+.att-pick{display:flex;gap:8px;margin-bottom:12px}
+.att-pick select{flex:1;font:inherit;font-size:15px;padding:9px;border-radius:10px;border:1px solid var(--line);background:var(--bg);color:var(--ink)}
+.att-total{padding:14px;border-radius:16px;background:linear-gradient(135deg,#F3EEFF,#FFF1EA);border:1px solid #E7DDF7;text-align:center;margin-bottom:8px}
+.att-total small{display:block;font-size:12.5px;color:#6B5FA0;font-weight:700}
+.att-total b{display:block;font-size:34px;color:#3A2E63;margin:2px 0}
+.att-total span{font-size:12.5px;color:var(--muted)}
+.att-st{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--line)}
+.att-st .att-bar{flex:0 0 34%;height:8px;border-radius:99px;background:var(--line);overflow:hidden}
+.att-st .att-bar i{display:block;height:100%;border-radius:99px}
+.att-st .pct{width:42px;text-align:right;font-weight:800;font-size:14px}
 body.tab-home #talkView,body.tab-talk #homeView{display:none}
 .tabbar.two{grid-template-columns:1fr 1fr}
 .of-hero,.of-hero *{font-family:'IBM Plex Sans KR',system-ui,sans-serif}
@@ -2836,13 +2862,13 @@ $('shareClose').onclick=closeAll;
 
 // ---- 🔒 운영진 (운영진 코드로 들어와요. 코드는 이 폰에만 저장돼요) ----
 const AD={code:LS.get('ofadm',''),me:null,links:[],staff:null,newCode:null,edit:null,tab:LS.get('ofadtab','loan'),loans:null,loanEdit:null,loanAll:false,loanMissing:false};
-const AD_ERR={'bad code':'코드가 맞지 않아요','too many tries':'여러 번 틀려서 10분 동안 막혔어요. 잠시 뒤 다시 해 주세요','owner only':'대표 운영자만 할 수 있어요','bad url':'주소는 https:// 로 시작해야 해요','bad label':'이름은 1~30글자로 적어 주세요','bad name':'이름은 1~20글자로 적어 주세요','too many links':'바로가기는 30개까지예요','too many staff':'운영진은 30명까지예요','no staff':'그 운영진을 찾지 못했어요','bad dept':'부서를 적어 주세요 (30글자까지)','bad who':'가져간 사람 이름을 적어 주세요 (20글자까지)','bad phone':'연락처를 010-1234-5678 처럼 적어 주세요','bad item':'물품을 적어 주세요 (80글자까지)','bad date':'가져간 날을 골라 주세요','bad due':'반납 예정일이 가져간 날보다 빨라요','bad memo':'메모는 200글자까지예요','too many':'대여 중 기록이 너무 많아요'};
+const AD_ERR={'bad code':'코드가 맞지 않아요','too many tries':'여러 번 틀려서 10분 동안 막혔어요. 잠시 뒤 다시 해 주세요','owner only':'대표 운영자만 할 수 있어요','bad url':'주소는 https:// 로 시작해야 해요','bad label':'이름은 1~30글자로 적어 주세요','bad name':'이름은 1~20글자로 적어 주세요','too many links':'바로가기는 30개까지예요','too many staff':'운영진은 30명까지예요','no staff':'그 운영진을 찾지 못했어요','bad dept':'부서를 적어 주세요 (30글자까지)','bad who':'가져간 사람 이름을 적어 주세요 (20글자까지)','bad phone':'연락처를 010-1234-5678 처럼 적어 주세요','bad item':'물품을 적어 주세요 (80글자까지)','bad date':'가져간 날을 골라 주세요','bad due':'반납 예정일이 가져간 날보다 빨라요','bad memo':'메모는 200글자까지예요','too many':'너무 많아요 (최대 개수를 넘었어요)','bad note':'메모는 30글자까지예요','not sunday':'주일(일요일)만 체크할 수 있어요','future':'아직 오지 않은 주일이에요'};
 async function adCall(fn,args,quiet){
   let r; try{ r=await grRpc(fn,Object.assign({p_code:AD.code},args||{})); }catch(e){ const m=String(e&&e.message||e); if(quiet&&/Could not find|PGRST202|does not exist|404/i.test(m)) return {__missing:true}; toast(/Could not find|PGRST202|does not exist/i.test(m)?'운영진 기능 준비가 안 됐어요 (SQL 실행이 필요해요)':'인터넷 연결을 확인해 주세요'); return null; }
   if(r&&r.error){ if(r.error==='bad code'&&AD.me){ AD.code=''; AD.me=null; LS.set('ofadm',''); toast('운영진 코드가 바뀌었거나 해임되었어요. 다시 들어와 주세요'); adPaint(); return null; } toast(AD_ERR[r.error]||'잘 안 됐어요'); return null; }
   return r;
 }
-async function adOpen(){ open($('adminSheet')); if(AD.code&&!AD.me){ const r=await adCall('of_login'); if(r){ AD.me=r; await adLoad(); } } adPaint(); }
+async function adOpen(){ open($('adminSheet')); if(AD.code&&!AD.me){ const r=await adCall('of_login'); if(r){ AD.me=r; await adLoad(); } } if(AD.me&&AD.tab==='att') await attLoad(); adPaint(); }
 async function adLoad(){ const r=await adCall('of_links_get'); AD.links=r?r.links:[]; await adLoadLoans(); if(AD.me&&AD.me.role==='owner'){ const s=await adCall('of_staff_list'); AD.staff=s?s.staff:[]; } }
 function adPaint(){
   const S=$('adminSheet'); const E=grEsc;
@@ -2850,16 +2876,17 @@ function adPaint(){
     S.innerHTML='<div class="grab"></div><h2>🔒 운영진</h2><div class="ref-en">운영진 코드를 넣으면 운영진 바로가기를 볼 수 있어요</div>'+
       '<div class="ad-sec ad-in"><input id="adCode" placeholder="운영진 코드 (예: K7PX-3MQA)" autocomplete="off" autocapitalize="characters" spellcheck="false"><button type="button" class="ad-btn pri" id="adGo">들어가기</button></div>'+
       '<p class="ad-note">운영진 코드는 대표 운영자에게 받을 수 있어요. 코드는 이 폰에만 저장되고, 다른 사람에게 보여 주면 안 돼요.</p><div class="row"><button class="btn" type="button" id="adClose">닫기</button></div>';
-    const go=async()=>{ const c=$('adCode').value.trim(); if(!c) return toast('코드를 넣어 주세요'); AD.code=c; const r=await adCall('of_login'); if(!r){ AD.code=''; return; } AD.me=r; LS.set('ofadm',c); await adLoad(); adPaint(); toast('👋 '+r.name+'님, 반가워요'); };
+    const go=async()=>{ const c=$('adCode').value.trim(); if(!c) return toast('코드를 넣어 주세요'); AD.code=c; const r=await adCall('of_login'); if(!r){ AD.code=''; return; } AD.me=r; LS.set('ofadm',c); await adLoad(); if(AD.tab==='att') await attLoad(); adPaint(); toast('👋 '+r.name+'님, 반가워요'); };
     $('adGo').onclick=go; $('adCode').onkeydown=e=>{ if(e.key==='Enter') go(); };
     $('adClose').onclick=closeAll; return;
   }
   const owner=AD.me.role==='owner';
   let h='<div class="grab"></div><h2>🔒 운영진</h2><div class="ref-en">👋 '+E(AD.me.name)+' · '+(owner?'대표 운영자':'운영진')+'</div>';
   const ed=AD.tab==='link'?AD.edit:null;
-  const TABS=[['loan','📦 물품 대여'],['link','🔗 바로가기']].concat(owner?[['staff','👥 운영진']]:[]); if(!TABS.some(t=>t[0]===AD.tab)) AD.tab='loan';
+  const TABS=[['att','✅ 출석'],['loan','📦 대여'],['link','🔗 바로가기']].concat(owner?[['staff','👥 운영진']]:[]); if(!TABS.some(t=>t[0]===AD.tab)) AD.tab='loan';
   h+='<div class="ad-tabs">'+TABS.map(t=>'<button type="button" data-adt="'+t[0]+'" aria-selected="'+(AD.tab===t[0])+'">'+t[1]+'</button>').join('')+'</div>';
   if(AD.tab==='loan') h+=adLoansHtml();
+  if(AD.tab==='att') h+=attHtml();
   if(AD.tab==='link'){
   h+='<div class="ad-sec"><b>🔗 운영진 바로가기</b>';
   if(!AD.links.length) h+='<p class="ad-note">아직 바로가기가 없어요. 새가족 폼 편집 주소, 응답 시트 주소 등을 더해 두세요.</p>';
@@ -2885,13 +2912,106 @@ function adPaint(){
     $('adCancel').onclick=()=>{ AD.edit=null; adPaint(); };
     $('adSave').onclick=async()=>{ const r=await adCall('of_link_save',{p_id:ed.id||null,p_label:$('adLabel').value.trim(),p_url:$('adUrl').value.trim()}); if(!r) return; AD.edit=null; await adLoad(); adPaint(); toast('저장했어요'); };
     if($('adDel')) $('adDel').onclick=async()=>{ if(!confirm('이 바로가기를 지울까요?')) return; const r=await adCall('of_link_delete',{p_id:ed.id}); if(!r) return; AD.edit=null; await adLoad(); adPaint(); }; }
-  S.querySelectorAll('[data-adt]').forEach(b=>b.onclick=()=>{ AD.tab=b.dataset.adt; LS.set('ofadtab',AD.tab); AD.edit=null; AD.loanEdit=null; adPaint(); });
+  S.querySelectorAll('[data-adt]').forEach(b=>b.onclick=async()=>{ AD.tab=b.dataset.adt; LS.set('ofadtab',AD.tab); AD.edit=null; AD.loanEdit=null; if(AD.tab==='att') await attLoad(); adPaint(); });
   if(AD.tab==='loan') adLoansWire(S);
+  if(AD.tab==='att') attWire(S);
   if(owner&&AD.tab==='staff'){
     $('adAppoint').onclick=async()=>{ const n=$('adName').value.trim(); if(!n) return toast('이름을 적어 주세요'); const r=await adCall('of_staff_add',{p_name:n}); if(!r) return; AD.newCode={name:n,code:r.code}; await adLoad(); adPaint(); };
     S.querySelectorAll('[data-rm]').forEach(b=>b.onclick=async()=>{ const x=AD.staff.find(y=>String(y.id)===b.dataset.rm); if(!confirm((x?x.name:'이 운영진')+'님을 해임할까요? 그 코드는 바로 못 쓰게 돼요.')) return; const r=await adCall('of_staff_remove',{p_id:+b.dataset.rm}); if(!r) return; AD.newCode=null; await adLoad(); adPaint(); toast('해임했어요'); });
     S.querySelectorAll('[data-rc]').forEach(b=>b.onclick=async()=>{ const x=AD.staff.find(y=>String(y.id)===b.dataset.rc); if(!confirm((x?x.name:'')+'님의 코드를 새로 만들까요? 예전 코드는 바로 못 쓰게 돼요.')) return; const r=await adCall('of_staff_recode',{p_id:+b.dataset.rc}); if(!r) return; AD.newCode={name:x?x.name:'',code:r.code}; adPaint(); });
     if($('adCopy')) $('adCopy').onclick=()=>{ const t=AD.newCode.code, done=()=>toast('코드를 복사했어요'); if(navigator.clipboard&&navigator.clipboard.writeText) navigator.clipboard.writeText(t).then(done,()=>fallbackCopy(t,done)); else fallbackCopy(t,done); };
+  }
+}
+
+
+// ---- ✅ 출석부 (운영진만) ----
+const sunOf=d=>{ const t=new Date(d+'T12:00:00'); t.setDate(t.getDate()-t.getDay()); return t.toLocaleDateString('sv-SE'); };
+const addD=(d,n)=>{ const t=new Date(d+'T12:00:00'); t.setDate(t.getDate()+n); return t.toLocaleDateString('sv-SE'); };
+const ATT={mode:'check',d:null,members:[],marks:{},missing:false,edit:null,per:{kind:'month',y:null,m:null,q:null,h:null},stats:null};
+async function attLoad(){
+  if(!ATT.d) ATT.d=sunOf(kToday());
+  const r=await adCall('of_att_members',{},true); if(r&&r.__missing){ ATT.missing=true; return; } ATT.missing=false; ATT.members=r?r.members:[];
+  if(ATT.mode==='check'){ const m=await adCall('of_att_day',{p_d:ATT.d}); ATT.marks=m?m.marks:{}; }
+  if(ATT.mode==='stats') await attStats();
+}
+function attRange(){ const P=ATT.per, y=P.y; const pad=n=>String(n).padStart(2,'0'); const last=(yy,mm)=>new Date(yy,mm,0).getDate();
+  if(P.kind==='month') return [y+'-'+pad(P.m)+'-01', y+'-'+pad(P.m)+'-'+last(y,P.m), y+'년 '+P.m+'월'];
+  if(P.kind==='quarter'){ const a=(P.q-1)*3+1, b=a+2; return [y+'-'+pad(a)+'-01', y+'-'+pad(b)+'-'+last(y,b), y+'년 '+P.q+'분기 ('+a+'~'+b+'월)']; }
+  if(P.kind==='half') return P.h===1?[y+'-01-01',y+'-06-30',y+'년 상반기 (1~6월)']:[y+'-07-01',y+'-12-31',y+'년 하반기 (7~12월)'];
+  return [y+'-01-01', y+'-12-31', y+'년 전체']; }
+async function attStats(){ const [f,t]=attRange(); const r=await adCall('of_att_stats',{p_from:f,p_to:t}); ATT.stats=r||{days:0,rows:[]}; }
+function attHtml(){
+  const E=grEsc;
+  if(ATT.missing) return '<div class="ad-sec"><p class="ad-note">출석부를 쓰려면 Supabase에서 <b>supabase-attendance.sql</b>을 한 번 실행해야 해요.</p></div>';
+  const P=ATT.per; if(!P.y){ const n=new Date(); P.y=n.getFullYear(); P.m=n.getMonth()+1; P.q=Math.floor(n.getMonth()/3)+1; P.h=n.getMonth()<6?1:2; }
+  let h='<div class="ad-sec"><div class="att-mode">'+[['check','✔️ 출석 체크'],['stats','📊 출석률'],['members','👥 단원']].map(x=>'<button type="button" data-attm="'+x[0]+'" aria-selected="'+(ATT.mode===x[0])+'">'+x[1]+'</button>').join('')+'</div>';
+  const act=ATT.members.filter(m=>m.active);
+  if(ATT.mode==='check'){
+    const thisSun=sunOf(kToday()), d=ATT.d;
+    const pc=act.filter(m=>ATT.marks[m.id]===true).length, ac=act.filter(m=>ATT.marks[m.id]===false).length, nc=act.length-pc-ac;
+    h+='<div class="att-nav"><button type="button" class="ad-btn" id="attPrev">‹</button><b>'+mdTxt(d)+(d===thisSun?' · 이번 주일':'')+'</b><button type="button" class="ad-btn" id="attNext"'+(d>=thisSun?' disabled':'')+'>›</button></div>';
+    if(!act.length) h+='<p class="ad-note">아직 등록한 단원이 없어요. <b>👥 단원</b>에서 이름을 먼저 등록해 주세요.</p>';
+    else{
+      h+='<div class="att-sum"><span class="ok">⭕ 출석 '+pc+'</span><span class="no">❌ 결석 '+ac+'</span><span>미체크 '+nc+'</span>'+(pc+ac?'<span>출석률 <b>'+Math.round(pc/(pc+ac)*100)+'%</b></span>':'')+'</div>';
+      if(nc) h+='<button type="button" class="ad-btn" id="attRestIn" style="width:100%;margin-bottom:6px">남은 '+nc+'명 모두 ⭕ 출석</button>';
+      act.forEach(m=>{ const v=ATT.marks[m.id];
+        h+='<div class="att-row"><div class="t"><b>'+E(m.name)+'</b>'+(m.note?'<small>'+E(m.note)+'</small>':'')+'</div>'+
+          '<button type="button" class="att-b in'+(v===true?' on':'')+'" data-atti="'+m.id+'">⭕ 출석</button><button type="button" class="att-b out'+(v===false?' on':'')+'" data-atto="'+m.id+'">❌ 결석</button></div>'; });
+      h+='<p class="ad-note">한 번 더 누르면 체크가 지워져요. 체크하지 않은 사람은 출석률 계산에서 빠져요.</p>';
+    }
+  }
+  if(ATT.mode==='stats'){
+    const ys=[P.y-1,P.y,P.y+1].filter(y=>y<=new Date().getFullYear());
+    h+='<div class="att-mode sm">'+[['month','월별'],['quarter','분기별'],['half','상·하반기'],['year','연도별']].map(x=>'<button type="button" data-attk="'+x[0]+'" aria-selected="'+(P.kind===x[0])+'">'+x[1]+'</button>').join('')+'</div>';
+    h+='<div class="att-pick"><select id="attY">'+[...new Set([P.y-2,P.y-1,P.y,new Date().getFullYear()])].sort().map(y=>'<option value="'+y+'"'+(y===P.y?' selected':'')+'>'+y+'년</option>').join('')+'</select>';
+    if(P.kind==='month') h+='<select id="attM">'+Array.from({length:12},(_,i)=>'<option value="'+(i+1)+'"'+(i+1===P.m?' selected':'')+'>'+(i+1)+'월</option>').join('')+'</select>';
+    if(P.kind==='quarter') h+='<select id="attQ">'+[1,2,3,4].map(q=>'<option value="'+q+'"'+(q===P.q?' selected':'')+'>'+q+'분기 ('+((q-1)*3+1)+'~'+(q*3)+'월)</option>').join('')+'</select>';
+    if(P.kind==='half') h+='<select id="attH"><option value="1"'+(P.h===1?' selected':'')+'>상반기 (1~6월)</option><option value="2"'+(P.h===2?' selected':'')+'>하반기 (7~12월)</option></select>';
+    h+='</div>';
+    const S=ATT.stats||{days:0,rows:[]}, label=attRange()[2];
+    const byId={}; S.rows.forEach(r=>byId[r.id]=r);
+    const list=ATT.members.filter(m=>m.active||byId[m.id]).map(m=>{ const r=byId[m.id]||{p:0,a:0}; const n=r.p+r.a; return {name:m.name,note:m.note,active:m.active,p:r.p,a:r.a,n,rate:n?r.p/n:null}; })
+      .sort((x,y)=>(y.rate??-1)-(x.rate??-1)||x.name.localeCompare(y.name,'ko'));
+    const TP=list.reduce((s,x)=>s+x.p,0), TN=list.reduce((s,x)=>s+x.n,0);
+    h+='<div class="att-total"><small>'+E(label)+'</small><b>'+(TN?Math.round(TP/TN*100)+'%':'–')+'</b><span>전체 출석률 · 체크한 주일 '+S.days+'번 · 출석 '+TP+' / '+TN+'</span></div>';
+    if(!TN) h+='<p class="ad-note">이 기간에는 출석 체크 기록이 없어요.</p>';
+    list.forEach(x=>{ const pct=x.rate==null?null:Math.round(x.rate*100);
+      h+='<div class="att-st"><div class="t"><b>'+E(x.name)+(x.active?'':' <small>(쉼)</small>')+'</b><small>'+(x.n?'출석 '+x.p+' · 결석 '+x.a:'기록 없음')+'</small></div><div class="att-bar"><i style="width:'+(pct||0)+'%;background:'+(pct==null?'transparent':pct>=80?'#2E9E5B':pct>=50?'#E0A93B':'#D9534F')+'"></i></div><span class="pct">'+(pct==null?'–':pct+'%')+'</span></div>'; });
+  }
+  if(ATT.mode==='members'){
+    const ed=ATT.edit;
+    h+='<div class="ad-in ln-form"><b style="font-size:14px">'+(ed?'✏️ 단원 고치기':'＋ 단원 등록')+'</b><div class="ln-2"><input id="attName" maxlength="20" placeholder="이름"><input id="attNote" maxlength="30" placeholder="역할·부서 (선택)"></div>'+
+      '<div style="display:flex;gap:8px"><button type="button" class="ad-btn pri" id="attSave" style="flex:1">'+(ed?'저장':'등록')+'</button>'+(ed?'<button type="button" class="ad-btn" id="attCancel">취소</button>':'')+'</div></div>';
+    if(!ATT.members.length) h+='<p class="ad-note">아직 등록한 단원이 없어요.</p>';
+    ATT.members.forEach(m=>{ h+='<div class="ad-row"><div class="t"><b>'+E(m.name)+(m.active?'':' <small style="display:inline">(쉼)</small>')+'</b><small>'+E(m.note||'')+'</small></div>'+
+      '<button type="button" class="ad-btn" data-attact="'+m.id+'">'+(m.active?'쉼':'복귀')+'</button><button type="button" class="ad-btn" data-atte="'+m.id+'">✏️</button><button type="button" class="ad-btn red" data-attdel="'+m.id+'">지우기</button></div>'; });
+    h+='<p class="ad-note"><b>쉼</b>: 잠시 쉬는 단원은 출석 체크 목록에서만 숨겨요(기록은 남아요). <b>지우기</b>: 그 사람의 출석 기록까지 모두 지워져요.</p>';
+  }
+  return h+'</div>';
+}
+function attWire(S){
+  const re=async()=>{ await attLoad(); adPaint(); };
+  S.querySelectorAll('[data-attm]').forEach(b=>b.onclick=async()=>{ ATT.mode=b.dataset.attm; ATT.edit=null; await re(); });
+  if(ATT.mode==='check'){
+    if($('attPrev')) $('attPrev').onclick=async()=>{ ATT.d=addD(ATT.d,-7); await re(); };
+    if($('attNext')) $('attNext').onclick=async()=>{ if(ATT.d>=sunOf(kToday())) return; ATT.d=addD(ATT.d,7); await re(); };
+    const mark=async(ids,v)=>{ const r=await adCall('of_att_mark',{p_d:ATT.d,p_ids:ids,p_present:v}); if(!r) return; ids.forEach(id=>{ if(v==null) delete ATT.marks[id]; else ATT.marks[id]=v; }); adPaint(); };
+    S.querySelectorAll('[data-atti]').forEach(b=>b.onclick=()=>{ const id=b.dataset.atti; mark([+id],ATT.marks[id]===true?null:true); });
+    S.querySelectorAll('[data-atto]').forEach(b=>b.onclick=()=>{ const id=b.dataset.atto; mark([+id],ATT.marks[id]===false?null:false); });
+    if($('attRestIn')) $('attRestIn').onclick=()=>{ const ids=ATT.members.filter(m=>m.active&&ATT.marks[m.id]===undefined).map(m=>m.id); if(ids.length) mark(ids,true); };
+  }
+  if(ATT.mode==='stats'){
+    const P=ATT.per;
+    S.querySelectorAll('[data-attk]').forEach(b=>b.onclick=async()=>{ P.kind=b.dataset.attk; await re(); });
+    [['attY','y'],['attM','m'],['attQ','q'],['attH','h']].forEach(([id,k])=>{ if($(id)) $(id).onchange=async()=>{ P[k]=+$(id).value; await re(); }; });
+  }
+  if(ATT.mode==='members'){
+    const ed=ATT.edit; if(ed){ $('attName').value=ed.name||''; $('attNote').value=ed.note||''; $('attCancel').onclick=()=>{ ATT.edit=null; adPaint(); }; }
+    const save=async()=>{ const n=$('attName').value.trim(); if(!n) return toast('이름을 적어 주세요'); const r=await adCall('of_att_member_save',{p_id:ed?ed.id:null,p_name:n,p_note:$('attNote').value.trim(),p_active:null}); if(!r) return; ATT.edit=null; toast(ed?'고쳤어요':'✅ '+n+'님을 등록했어요'); await re(); if(!ed&&$('attName')) $('attName').focus(); };
+    $('attSave').onclick=save; $('attName').onkeydown=e=>{ if(e.key==='Enter') save(); };
+    S.querySelectorAll('[data-atte]').forEach(b=>b.onclick=()=>{ ATT.edit=ATT.members.find(m=>String(m.id)===b.dataset.atte)||null; adPaint(); });
+    S.querySelectorAll('[data-attact]').forEach(b=>b.onclick=async()=>{ const m=ATT.members.find(x=>String(x.id)===b.dataset.attact); if(!m) return; const r=await adCall('of_att_member_save',{p_id:m.id,p_name:m.name,p_note:m.note||'',p_active:!m.active}); if(!r) return; await re(); });
+    S.querySelectorAll('[data-attdel]').forEach(b=>b.onclick=async()=>{ const m=ATT.members.find(x=>String(x.id)===b.dataset.attdel); if(!confirm((m?m.name:'')+'님을 지울까요? 출석 기록도 모두 지워지고 되돌릴 수 없어요. 잠시 쉬는 거라면 \'쉼\'을 눌러 주세요.')) return; const r=await adCall('of_att_member_delete',{p_id:m.id}); if(!r) return; await re(); });
   }
 }
 
