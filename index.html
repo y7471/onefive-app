@@ -1348,6 +1348,10 @@ body.tab-home #homeView,body.tab-talk #talkView,body.tab-notes #notesView,body.t
 .att-st .att-bar i{display:block;height:100%;border-radius:99px}
 .att-st .pct{width:42px;text-align:right;font-weight:800;font-size:14px}
 body.tab-home #talkView,body.tab-talk #homeView{display:none}
+body.tab-home #adminView,body.tab-talk #adminView,body.tab-admin #homeView,body.tab-admin #talkView{display:none}
+.tabbar.three{grid-template-columns:1fr 1fr 1fr}
+.of-adv{padding-top:calc(14px + env(safe-area-inset-top,0px));padding-bottom:calc(120px + env(safe-area-inset-bottom,0px))}
+.of-adv .grab,.of-adv #adClose{display:none}
 .tabbar.two{grid-template-columns:1fr 1fr}
 .of-hero,.of-hero *{font-family:'IBM Plex Sans KR',system-ui,sans-serif}
 </style>
@@ -1424,6 +1428,7 @@ body.tab-home #talkView,body.tab-talk #homeView{display:none}
 </section>
 
 <section id="talkView" class="home" aria-label="나눔"></section>
+<section id="adminView" class="home of-adv" aria-label="운영진"></section>
 
 <div class="scrim" id="scrim" hidden></div>
 <section class="sheet" id="shareSheet" hidden aria-label="앱 나누기">
@@ -1440,6 +1445,7 @@ body.tab-home #talkView,body.tab-talk #homeView{display:none}
 <nav class="tabbar two" aria-label="화면 바꾸기">
   <button type="button" id="tabHome"><svg viewBox="0 0 24 24"><path d="M3 11l9-7 9 7"/><path d="M5 10v10h14V10"/></svg>홈</button>
   <button type="button" id="tabTalk"><svg viewBox="0 0 24 24"><path d="M4 5h11a2 2 0 012 2v6a2 2 0 01-2 2H9l-4 3v-3H4a2 2 0 01-2-2V7a2 2 0 012-2z"/><path d="M19 9h1a2 2 0 012 2v5a2 2 0 01-2 2h-1v3l-3-3"/></svg>나눔</button>
+  <button type="button" id="tabAdmin" hidden><svg viewBox="0 0 24 24"><rect x="5" y="10" width="14" height="10" rx="2"/><path d="M8 10V7a4 4 0 018 0v3"/></svg>운영진</button>
 </nav>
 <section class="pilsa game" id="gameView" hidden aria-label="게임"><div class="ph"><button type="button" id="gameClose" aria-label="게임 닫기">✕</button><h2>게임</h2></div><div id="gameBody"></div></section>
 <div class="toast" id="toast" hidden></div>
@@ -1489,16 +1495,20 @@ function setupBack(){
 // ---- 탭 (홈 · 소그룹) ----
 function setTab(t){
   if(t!=='home'&&tab==='home'&&HSN>0) hpush();
-  tab=t; ['home','talk'].forEach(x=>document.body.classList.toggle('tab-'+x,t===x));
+  if(t==='admin'&&!AD.code) t='home';
+  tab=t; ['home','talk','admin'].forEach(x=>document.body.classList.toggle('tab-'+x,t===x));
+  $('tabAdmin').setAttribute('aria-current',t==='admin'?'page':'false');
   $('tabHome').setAttribute('aria-current',t==='home'?'page':'false');
   $('tabTalk').setAttribute('aria-current',t==='talk'?'page':'false');
   try{ history.replaceState(null,'','#'+t); }catch(e){}
-  document.title=t==='talk'?'나눔 · 원파이브':'원파이브';
+  document.title=t==='talk'?'나눔 · 원파이브':t==='admin'?'운영진 · 원파이브':'원파이브';
   if(t==='talk') renderTalk();
+  if(t==='admin') adView();
   window.scrollTo(0,0);
 }
 $('tabHome').onclick=()=>{ closeAll(); setTab('home'); };
 $('tabTalk').onclick=()=>{ closeAll(); setTab('talk'); };
+$('tabAdmin').onclick=()=>{ closeAll(); setTab('admin'); };
 
 // ---- 나눔: 소그룹 랜덤 질문 ----
 const TALK_T={past:['⏳','과거'],now:['🌱','지금'],future:['🔭','미래']};
@@ -2871,12 +2881,12 @@ async function adCall(fn,args,quiet){
 async function adOpen(){ open($('adminSheet')); if(AD.code&&!AD.me){ const r=await adCall('of_login'); if(r){ AD.me=r; await adLoad(); } } if(AD.me&&AD.tab==='att') await attLoad(); adPaint(); }
 async function adLoad(){ const r=await adCall('of_links_get'); AD.links=r?r.links:[]; await adLoadLoans(); if(AD.me&&AD.me.role==='owner'){ const s=await adCall('of_staff_list'); AD.staff=s?s.staff:[]; } }
 function adPaint(){
-  const S=$('adminSheet'); const E=grEsc;
+  adTabSync(); const S=(tab==='admin'&&AD.me)?$('adminView'):$('adminSheet'); const E=grEsc;
   if(!AD.me){
     S.innerHTML='<div class="grab"></div><h2>🔒 운영진</h2><div class="ref-en">운영진 코드를 넣으면 운영진 바로가기를 볼 수 있어요</div>'+
       '<div class="ad-sec ad-in"><input id="adCode" placeholder="운영진 코드 (예: K7PX-3MQA)" autocomplete="off" autocapitalize="characters" spellcheck="false"><button type="button" class="ad-btn pri" id="adGo">들어가기</button></div>'+
       '<p class="ad-note">운영진 코드는 대표 운영자에게 받을 수 있어요. 코드는 이 폰에만 저장되고, 다른 사람에게 보여 주면 안 돼요.</p><div class="row"><button class="btn" type="button" id="adClose">닫기</button></div>';
-    const go=async()=>{ const c=$('adCode').value.trim(); if(!c) return toast('코드를 넣어 주세요'); AD.code=c; const r=await adCall('of_login'); if(!r){ AD.code=''; return; } AD.me=r; LS.set('ofadm',c); await adLoad(); if(AD.tab==='att') await attLoad(); adPaint(); toast('👋 '+r.name+'님, 반가워요'); };
+    const go=async()=>{ const c=$('adCode').value.trim(); if(!c) return toast('코드를 넣어 주세요'); AD.code=c; const r=await adCall('of_login'); if(!r){ AD.code=''; return; } AD.me=r; LS.set('ofadm',c); await adLoad(); if(AD.tab==='att') await attLoad(); closeAll(); adTabSync(); setTab('admin'); toast('👋 '+r.name+'님, 반가워요 · 아래 🔒 운영진 탭에서 쓸 수 있어요',2600); };
     $('adGo').onclick=go; $('adCode').onkeydown=e=>{ if(e.key==='Enter') go(); };
     $('adClose').onclick=closeAll; return;
   }
@@ -2905,7 +2915,7 @@ function adPaint(){
   h+='<div class="row"><button class="btn" type="button" id="adOut">이 폰에서 나가기</button><button class="btn" type="button" id="adClose">닫기</button></div>';
   S.innerHTML=h;
   $('adClose').onclick=closeAll;
-  $('adOut').onclick=()=>{ AD.code=''; AD.me=null; AD.staff=null; AD.newCode=null; LS.set('ofadm',''); adPaint(); toast('이 폰에서 운영진 메뉴를 닫았어요'); };
+  $('adOut').onclick=()=>{ if(!confirm('이 폰에서 운영진 메뉴를 닫을까요? 다시 쓰려면 운영진 코드를 넣어야 해요.')) return; AD.code=''; AD.me=null; AD.staff=null; AD.newCode=null; LS.set('ofadm',''); $('adminView').innerHTML=''; adTabSync(); setTab('home'); toast('이 폰에서 운영진 메뉴를 닫았어요'); };
   if($('adAdd')) $('adAdd').onclick=()=>{ AD.edit={}; adPaint(); $('adLabel').focus(); };
   S.querySelectorAll('[data-le]').forEach(b=>b.onclick=()=>{ AD.edit=AD.links.find(l=>String(l.id)===b.dataset.le)||{}; adPaint(); $('adLabel').value=AD.edit.label||''; $('adUrl').value=AD.edit.url||''; });
   if(ed){ if(ed.label) $('adLabel').value=ed.label; if(ed.url) $('adUrl').value=ed.url;
@@ -3060,12 +3070,20 @@ function adLoansWire(S){
   S.querySelectorAll('[data-lne]').forEach(b=>b.onclick=()=>{ AD.loanEdit=AD.loans.find(x=>String(x.id)===b.dataset.lne)||null; adPaint(); });
   if($('lnAll')) $('lnAll').onclick=()=>{ AD.loanAll=!AD.loanAll; adPaint(); };
 }
-$('adminBtn').onclick=adOpen;
+function adTabSync(){ const on=!!AD.code; $('tabAdmin').hidden=!on; const nav=$('tabAdmin').parentElement; nav.classList.toggle('three',on); nav.classList.toggle('two',!on); if(!on&&tab==='admin') setTab('home'); }
+async function adView(){
+  if(!AD.code) return;
+  if(!AD.me){ $('adminView').innerHTML='<p class="ad-note" style="text-align:center;margin-top:40px">불러오는 중…</p>'; const r=await adCall('of_login'); if(!r){ if(!AD.code){ adTabSync(); } else $('adminView').innerHTML='<p class="ad-note" style="text-align:center;margin-top:40px">인터넷 연결을 확인해 주세요</p>'; return; } AD.me=r; await adLoad(); }
+  if(AD.tab==='att') await attLoad();
+  adPaint();
+}
+$('adminBtn').onclick=()=>{ if(AD.code){ closeAll(); setTab('admin'); } else adOpen(); };
 
 // ---- 시작 ----
 $('homeDate').textContent=new Date().toLocaleDateString('ko-KR',{timeZone:'Asia/Seoul',month:'long',day:'numeric',weekday:'long'});
 setupBack();
-setTab((location.hash||'').slice(1)==='talk'?'talk':'home');
+adTabSync();
+setTab((h=>h==='talk'||h==='admin'?h:'home')((location.hash||'').slice(1)));
 loadJubo();
 try{ grDeepLink(); }catch(e){}
 })();
