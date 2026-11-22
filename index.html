@@ -1302,6 +1302,24 @@ body.tab-home #homeView,body.tab-talk #talkView,body.tab-notes #notesView,body.t
 .ad-code{margin-top:10px;padding:14px;border-radius:14px;background:#FFF6E0;border:1px solid #F0D58A;text-align:center}
 .ad-code b{display:block;font-size:26px;letter-spacing:3px;font-family:ui-monospace,Menlo,monospace;margin:6px 0}
 .ad-note{font-size:12.5px;color:var(--muted);line-height:1.6;margin:8px 0 0;word-break:keep-all}
+.ad-tabs{display:flex;gap:6px;margin-top:14px;overflow-x:auto}
+.ad-tabs button{flex:1;white-space:nowrap;padding:9px 10px;border-radius:999px;border:1px solid var(--line);background:var(--surface);color:var(--ink);font:inherit;font-size:13.5px;font-weight:700;cursor:pointer}
+.ad-tabs button[aria-selected=true]{background:#1C1A2E;border-color:#1C1A2E;color:#fff}
+.ln-sum{display:flex;gap:10px;align-items:center;margin-bottom:10px;font-size:14px}
+.ln-sum b{font-size:18px}
+.ln-late{color:#B3261E;font-weight:700}
+.ln-form{padding:12px;border-radius:14px;background:var(--bg);border:1px solid var(--line);margin-bottom:10px}
+.ln-2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.ln-2>*{min-width:0}
+.ln-2 label{display:grid;gap:4px;font-size:12px;color:var(--muted);font-weight:600}
+.ln-row{padding:12px 0;border-bottom:1px solid var(--line)}
+.ln-row.done{opacity:.7}
+.ln-top{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.ln-top b{font-size:15.5px}
+.ln-st{font-size:11.5px;font-weight:800;padding:3px 8px;border-radius:999px}
+.ln-st.out{background:#E8F0FF;color:#2D5FD0}.ln-st.late{background:#FDE7E5;color:#B3261E}.ln-st.ok{background:#E3F5EA;color:#1E7A45}
+.ln-meta{font-size:13px;color:var(--muted);margin-top:3px;word-break:keep-all}
+.ln-acts{display:flex;gap:8px;margin-top:8px}
 body.tab-home #talkView,body.tab-talk #homeView{display:none}
 .tabbar.two{grid-template-columns:1fr 1fr}
 .of-hero,.of-hero *{font-family:'IBM Plex Sans KR',system-ui,sans-serif}
@@ -2816,15 +2834,15 @@ $('shareClose').onclick=closeAll;
 
 
 // ---- 🔒 운영진 (운영진 코드로 들어와요. 코드는 이 폰에만 저장돼요) ----
-const AD={code:LS.get('ofadm',''),me:null,links:[],staff:null,newCode:null,edit:null};
-const AD_ERR={'bad code':'코드가 맞지 않아요','too many tries':'여러 번 틀려서 10분 동안 막혔어요. 잠시 뒤 다시 해 주세요','owner only':'대표 운영자만 할 수 있어요','bad url':'주소는 https:// 로 시작해야 해요','bad label':'이름은 1~30글자로 적어 주세요','bad name':'이름은 1~20글자로 적어 주세요','too many links':'바로가기는 30개까지예요','too many staff':'운영진은 30명까지예요','no staff':'그 운영진을 찾지 못했어요'};
-async function adCall(fn,args){
-  let r; try{ r=await grRpc(fn,Object.assign({p_code:AD.code},args||{})); }catch(e){ const m=String(e&&e.message||e); toast(/Could not find|PGRST202|does not exist/i.test(m)?'운영진 기능 준비가 안 됐어요 (SQL 실행이 필요해요)':'인터넷 연결을 확인해 주세요'); return null; }
+const AD={code:LS.get('ofadm',''),me:null,links:[],staff:null,newCode:null,edit:null,tab:LS.get('ofadtab','loan'),loans:null,loanEdit:null,loanAll:false,loanMissing:false};
+const AD_ERR={'bad code':'코드가 맞지 않아요','too many tries':'여러 번 틀려서 10분 동안 막혔어요. 잠시 뒤 다시 해 주세요','owner only':'대표 운영자만 할 수 있어요','bad url':'주소는 https:// 로 시작해야 해요','bad label':'이름은 1~30글자로 적어 주세요','bad name':'이름은 1~20글자로 적어 주세요','too many links':'바로가기는 30개까지예요','too many staff':'운영진은 30명까지예요','no staff':'그 운영진을 찾지 못했어요','bad dept':'부서를 적어 주세요 (30글자까지)','bad who':'가져간 사람 이름을 적어 주세요 (20글자까지)','bad item':'물품을 적어 주세요 (80글자까지)','bad date':'가져간 날을 골라 주세요','bad due':'반납 예정일이 가져간 날보다 빨라요','bad memo':'메모는 200글자까지예요','too many':'대여 중 기록이 너무 많아요'};
+async function adCall(fn,args,quiet){
+  let r; try{ r=await grRpc(fn,Object.assign({p_code:AD.code},args||{})); }catch(e){ const m=String(e&&e.message||e); if(quiet&&/Could not find|PGRST202|does not exist|404/i.test(m)) return {__missing:true}; toast(/Could not find|PGRST202|does not exist/i.test(m)?'운영진 기능 준비가 안 됐어요 (SQL 실행이 필요해요)':'인터넷 연결을 확인해 주세요'); return null; }
   if(r&&r.error){ if(r.error==='bad code'&&AD.me){ AD.code=''; AD.me=null; LS.set('ofadm',''); toast('운영진 코드가 바뀌었거나 해임되었어요. 다시 들어와 주세요'); adPaint(); return null; } toast(AD_ERR[r.error]||'잘 안 됐어요'); return null; }
   return r;
 }
 async function adOpen(){ open($('adminSheet')); if(AD.code&&!AD.me){ const r=await adCall('of_login'); if(r){ AD.me=r; await adLoad(); } } adPaint(); }
-async function adLoad(){ const r=await adCall('of_links_get'); AD.links=r?r.links:[]; if(AD.me&&AD.me.role==='owner'){ const s=await adCall('of_staff_list'); AD.staff=s?s.staff:[]; } }
+async function adLoad(){ const r=await adCall('of_links_get'); AD.links=r?r.links:[]; await adLoadLoans(); if(AD.me&&AD.me.role==='owner'){ const s=await adCall('of_staff_list'); AD.staff=s?s.staff:[]; } }
 function adPaint(){
   const S=$('adminSheet'); const E=grEsc;
   if(!AD.me){
@@ -2837,14 +2855,19 @@ function adPaint(){
   }
   const owner=AD.me.role==='owner';
   let h='<div class="grab"></div><h2>🔒 운영진</h2><div class="ref-en">👋 '+E(AD.me.name)+' · '+(owner?'대표 운영자':'운영진')+'</div>';
+  const ed=AD.tab==='link'?AD.edit:null;
+  const TABS=[['loan','📦 물품 대여'],['link','🔗 바로가기']].concat(owner?[['staff','👥 운영진']]:[]); if(!TABS.some(t=>t[0]===AD.tab)) AD.tab='loan';
+  h+='<div class="ad-tabs">'+TABS.map(t=>'<button type="button" data-adt="'+t[0]+'" aria-selected="'+(AD.tab===t[0])+'">'+t[1]+'</button>').join('')+'</div>';
+  if(AD.tab==='loan') h+=adLoansHtml();
+  if(AD.tab==='link'){
   h+='<div class="ad-sec"><b>🔗 운영진 바로가기</b>';
   if(!AD.links.length) h+='<p class="ad-note">아직 바로가기가 없어요. 새가족 폼 편집 주소, 응답 시트 주소 등을 더해 두세요.</p>';
   AD.links.forEach(l=>{ h+='<div class="ad-row"><a class="ad-link" href="'+E(l.url)+'" target="_blank" rel="noopener"><span>'+E(l.label)+'</span></a><button type="button" class="ad-btn" data-le="'+l.id+'">✏️</button></div>'; });
-  const ed=AD.edit;
   h+='<div class="ad-in" style="margin-top:10px"'+(ed?'':' hidden')+' id="adForm"><input id="adLabel" maxlength="30" placeholder="이름 (예: 새가족 응답 시트)"><input id="adUrl" maxlength="500" placeholder="https://docs.google.com/…" inputmode="url" autocapitalize="off" spellcheck="false"><div style="display:flex;gap:8px"><button type="button" class="ad-btn pri" id="adSave" style="flex:1">저장</button>'+(ed&&ed.id?'<button type="button" class="ad-btn red" id="adDel">지우기</button>':'')+'<button type="button" class="ad-btn" id="adCancel">취소</button></div></div>';
   if(!ed) h+='<button type="button" class="ad-btn" id="adAdd" style="margin-top:10px">＋ 바로가기 더하기</button>';
   h+='<p class="ad-note">구글 폼·시트는 주소를 알아도 <b>공유받은 사람만</b> 열 수 있어요. 새 운영진이 시트를 보려면 시트의 <b>공유</b>에서 그분의 구글 이메일을 따로 추가해 주세요.</p></div>';
-  if(owner){
+  }
+  if(owner&&AD.tab==='staff'){
     h+='<div class="ad-sec"><b>👥 운영진 관리 (대표만)</b>';
     (AD.staff||[]).forEach(x=>{ h+='<div class="ad-row"><div class="t"><b>'+E(x.name)+(x.me?' (나)':'')+'</b><small>'+(x.role==='owner'?'대표 운영자':'운영진')+' · '+new Date(x.at).toLocaleDateString('ko-KR')+' 임명</small></div>'+(x.role==='staff'?'<button type="button" class="ad-btn" data-rc="'+x.id+'">코드 새로</button><button type="button" class="ad-btn red" data-rm="'+x.id+'">해임</button>':'')+'</div>'; });
     h+='<div class="ad-in" style="margin-top:10px"><input id="adName" maxlength="20" placeholder="새 운영진 이름 (별칭도 좋아요)"><button type="button" class="ad-btn pri" id="adAppoint">👑 운영진 임명하기</button></div>';
@@ -2861,12 +2884,60 @@ function adPaint(){
     $('adCancel').onclick=()=>{ AD.edit=null; adPaint(); };
     $('adSave').onclick=async()=>{ const r=await adCall('of_link_save',{p_id:ed.id||null,p_label:$('adLabel').value.trim(),p_url:$('adUrl').value.trim()}); if(!r) return; AD.edit=null; await adLoad(); adPaint(); toast('저장했어요'); };
     if($('adDel')) $('adDel').onclick=async()=>{ if(!confirm('이 바로가기를 지울까요?')) return; const r=await adCall('of_link_delete',{p_id:ed.id}); if(!r) return; AD.edit=null; await adLoad(); adPaint(); }; }
-  if(owner){
+  S.querySelectorAll('[data-adt]').forEach(b=>b.onclick=()=>{ AD.tab=b.dataset.adt; LS.set('ofadtab',AD.tab); AD.edit=null; AD.loanEdit=null; adPaint(); });
+  if(AD.tab==='loan') adLoansWire(S);
+  if(owner&&AD.tab==='staff'){
     $('adAppoint').onclick=async()=>{ const n=$('adName').value.trim(); if(!n) return toast('이름을 적어 주세요'); const r=await adCall('of_staff_add',{p_name:n}); if(!r) return; AD.newCode={name:n,code:r.code}; await adLoad(); adPaint(); };
     S.querySelectorAll('[data-rm]').forEach(b=>b.onclick=async()=>{ const x=AD.staff.find(y=>String(y.id)===b.dataset.rm); if(!confirm((x?x.name:'이 운영진')+'님을 해임할까요? 그 코드는 바로 못 쓰게 돼요.')) return; const r=await adCall('of_staff_remove',{p_id:+b.dataset.rm}); if(!r) return; AD.newCode=null; await adLoad(); adPaint(); toast('해임했어요'); });
     S.querySelectorAll('[data-rc]').forEach(b=>b.onclick=async()=>{ const x=AD.staff.find(y=>String(y.id)===b.dataset.rc); if(!confirm((x?x.name:'')+'님의 코드를 새로 만들까요? 예전 코드는 바로 못 쓰게 돼요.')) return; const r=await adCall('of_staff_recode',{p_id:+b.dataset.rc}); if(!r) return; AD.newCode={name:x?x.name:'',code:r.code}; adPaint(); });
     if($('adCopy')) $('adCopy').onclick=()=>{ const t=AD.newCode.code, done=()=>toast('코드를 복사했어요'); if(navigator.clipboard&&navigator.clipboard.writeText) navigator.clipboard.writeText(t).then(done,()=>fallbackCopy(t,done)); else fallbackCopy(t,done); };
   }
+}
+
+// ---- 📦 물품 대여 (운영진만) ----
+const kToday=()=>new Date().toLocaleDateString('sv-SE',{timeZone:'Asia/Seoul'});
+const mdTxt=d=>{ if(!d) return ''; const [y,m,dd]=d.split('-'); const w='일월화수목금토'[new Date(d+'T12:00:00').getDay()]; return Number(m)+'/'+Number(dd)+'('+w+')'; };
+async function adLoadLoans(){ const r=await adCall('of_loans_get',{},true); if(r&&r.__missing){ AD.loanMissing=true; AD.loans=[]; return; } AD.loanMissing=false; AD.loans=r?r.loans:[]; }
+function adLoansHtml(){
+  const E=grEsc, t=kToday();
+  if(AD.loanMissing) return '<div class="ad-sec"><p class="ad-note">물품 대여 기록을 쓰려면 Supabase에서 <b>supabase-loans.sql</b>을 한 번 실행해야 해요.</p></div>';
+  const L=AD.loans||[], out=L.filter(l=>!l.ret), back=L.filter(l=>l.ret), late=out.filter(l=>l.due&&l.due<t).length;
+  let h='<div class="ad-sec"><div class="ln-sum"><span><b>'+out.length+'</b>건 대여 중</span>'+(late?'<span class="ln-late">⏰ 반납 지남 '+late+'건</span>':'')+'</div>';
+  const ed=AD.loanEdit;
+  if(ed){
+    h+='<div class="ad-in ln-form"><b style="font-size:14px">'+(ed.id?'✏️ 대여 기록 고치기':'＋ 새 대여 기록')+'</b>'+
+      '<div class="ln-2"><input id="lnDept" maxlength="30" placeholder="부서 (예: 청년부)"><input id="lnWho" maxlength="20" placeholder="가져간 사람"></div>'+
+      '<input id="lnItem" maxlength="80" placeholder="물품 (예: 무선 마이크 2개, 조명 스탠드)">'+
+      '<div class="ln-2"><label>가져간 날<input type="date" id="lnOut"></label><label>반납 예정일 (선택)<input type="date" id="lnDue"></label></div>'+
+      '<input id="lnMemo" maxlength="200" placeholder="메모 (선택, 예: 케이스 포함)">'+
+      '<div style="display:flex;gap:8px"><button type="button" class="ad-btn pri" id="lnSave" style="flex:1">저장</button>'+(ed.id?'<button type="button" class="ad-btn red" id="lnDel">지우기</button>':'')+'<button type="button" class="ad-btn" id="lnCancel">취소</button></div></div>';
+  } else h+='<button type="button" class="ad-btn pri" id="lnAdd" style="width:100%;margin-bottom:6px">＋ 대여 기록하기</button>';
+  const row=l=>{ const isLate=!l.ret&&l.due&&l.due<t;
+    return '<div class="ln-row'+(l.ret?' done':'')+'"><div class="ln-top"><span class="ln-st '+(l.ret?'ok':(isLate?'late':'out'))+'">'+(l.ret?'✅ 반납':(isLate?'⏰ 반납 지남':'📦 대여 중'))+'</span><b>'+E(l.item)+'</b></div>'+
+      '<div class="ln-meta">'+E(l.dept)+' · '+E(l.who)+'</div>'+
+      '<div class="ln-meta">가져간 날 '+mdTxt(l.out)+(l.due?' · 반납 예정 '+mdTxt(l.due):'')+(l.ret?' · 반납 '+mdTxt(l.ret)+(l.ret_by?' (확인: '+E(l.ret_by)+')':''):'')+'</div>'+
+      (l.memo?'<div class="ln-meta">📝 '+E(l.memo)+'</div>':'')+
+      '<div class="ln-acts">'+(l.ret?'<button type="button" class="ad-btn" data-lnb="'+l.id+'">반납 취소</button>':'<button type="button" class="ad-btn pri" data-lnr="'+l.id+'">✅ 반납 확인</button>')+'<button type="button" class="ad-btn" data-lne="'+l.id+'">✏️</button></div></div>'; };
+  if(!out.length) h+='<p class="ad-note">지금 대여 중인 물품이 없어요.</p>';
+  out.forEach(l=>h+=row(l));
+  if(back.length){ h+='<button type="button" class="ad-btn" id="lnAll" style="margin-top:8px">'+(AD.loanAll?'반납한 기록 접기':'반납한 기록 보기 ('+back.length+')')+'</button>'; if(AD.loanAll) back.forEach(l=>h+=row(l)); }
+  h+='<p class="ad-note">기록한 운영진과 반납을 확인한 운영진 이름이 함께 남아요. 반납한 기록은 반납한 날부터 1년이 지나면 자동으로 지워져요.</p></div>';
+  return h;
+}
+function adLoansWire(S){
+  const ed=AD.loanEdit, re=async()=>{ await adLoadLoans(); adPaint(); };
+  if($('lnAdd')) $('lnAdd').onclick=()=>{ AD.loanEdit={}; adPaint(); $('lnOut').value=kToday(); $('lnDept').focus(); };
+  if(ed){
+    if(ed.id){ $('lnDept').value=ed.dept||''; $('lnWho').value=ed.who||''; $('lnItem').value=ed.item||''; $('lnOut').value=ed.out||''; $('lnDue').value=ed.due||''; $('lnMemo').value=ed.memo||''; }
+    else if(!$('lnOut').value) $('lnOut').value=kToday();
+    $('lnCancel').onclick=()=>{ AD.loanEdit=null; adPaint(); };
+    $('lnSave').onclick=async()=>{ const r=await adCall('of_loan_save',{p_id:ed.id||null,p_dept:$('lnDept').value.trim(),p_who:$('lnWho').value.trim(),p_item:$('lnItem').value.trim(),p_out:$('lnOut').value||null,p_due:$('lnDue').value||null,p_memo:$('lnMemo').value.trim()}); if(!r) return; AD.loanEdit=null; toast(ed.id?'고쳤어요':'대여를 기록했어요'); await re(); };
+    if($('lnDel')) $('lnDel').onclick=async()=>{ if(!confirm('이 대여 기록을 지울까요? 되돌릴 수 없어요.')) return; const r=await adCall('of_loan_delete',{p_id:ed.id}); if(!r) return; AD.loanEdit=null; await re(); };
+  }
+  S.querySelectorAll('[data-lnr]').forEach(b=>b.onclick=async()=>{ const l=AD.loans.find(x=>String(x.id)===b.dataset.lnr); if(!confirm((l?l.item+' — ':'')+'반납을 확인할까요?')) return; const r=await adCall('of_loan_return',{p_id:+b.dataset.lnr,p_back:true}); if(!r) return; toast('✅ 반납을 확인했어요'); await re(); });
+  S.querySelectorAll('[data-lnb]').forEach(b=>b.onclick=async()=>{ if(!confirm('반납 확인을 취소하고 다시 대여 중으로 바꿀까요?')) return; const r=await adCall('of_loan_return',{p_id:+b.dataset.lnb,p_back:false}); if(!r) return; await re(); });
+  S.querySelectorAll('[data-lne]').forEach(b=>b.onclick=()=>{ AD.loanEdit=AD.loans.find(x=>String(x.id)===b.dataset.lne)||null; adPaint(); });
+  if($('lnAll')) $('lnAll').onclick=()=>{ AD.loanAll=!AD.loanAll; adPaint(); };
 }
 $('adminBtn').onclick=adOpen;
 
